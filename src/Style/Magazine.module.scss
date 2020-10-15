@@ -1,0 +1,96 @@
+.Container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .Column {
+    width: 50%;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+
+    .PriceContainer {
+      width: 100%;
+      display: flex;
+      margin: 10px;
+      border-radius: 3px;
+
+      .Price_Column {
+        width: 50%;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+
+        span {
+          width: 100%;
+          font-size: 35px;
+          text-align: center;
+        }
+        div {
+          width: 100%;
+        }
+
+        &_Name {
+          font-size: 25px;
+        }
+        &_Price {
+          font-size: 35px;
+        }
+      }
+    }
+    .ContainerActive {
+      box-shadow: 0 0 2px #fff;
+      background-color: salmon;
+      transition: 0.5s;
+      .Price_Column {
+        .Price_Column_Name {
+          color: green;
+          font-weight: bolder;
+        }
+
+        span {
+          font-weight: bolder;
+          color: red;
+          font-size: 50px;
+        }
+      }
+    }
+
+    .Row {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+  }
+
+  .RowInputs {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    box-sizing: border-box;
+    position: relative;
+    label,
+    input {
+      width: 50%;
+    }
+    span {
+      width: 100%;
+      color: red;
+    }
+    .InputDisable {
+      width: 100%;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      z-index: 2;
+    }
+  }
+
+  .Purchase div {
+    width: 50%;
+  }
+}

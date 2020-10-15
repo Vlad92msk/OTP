@@ -1,24 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Magazine } from './Components/Magazine';
+
+const tovar = [
+  {
+      price: 100,
+      name: 'Товар 1'
+  },
+  {
+    price: 50,
+    name: 'Товар 2'
+},
+{
+  price: 250,
+  name: 'Товар 3'
+},
+{
+  price: 92,
+  name: 'Товар 4'
+},
+]
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Magazine  arr={tovar}/>
     </div>
   );
 }
