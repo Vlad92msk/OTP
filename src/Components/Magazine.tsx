@@ -41,7 +41,7 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
         }))
         return a
     }, [])
-    const products = useMemo(() => productsNumeric(arr), [])
+    const products = useMemo(() => productsNumeric(arr), [productsNumeric, arr])
 
     //Заказ пользователя
     const [order, setOrder] = useState<OrderType>({
@@ -128,45 +128,49 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
     return (
         <div className={cls.Container}>
             <div className={cls.Column}>
-                {products.map((t, i) =><Price key={i} propduct={t} trueVariants={trueVariants}/>)}
+                {products.map((t, i) => <Price key={i} propduct={t} trueVariants={trueVariants} isErrors={isErrors}/>)}
             </div>
             <div className={cls.Column}>
                 <div className={cls.Row}>
-                    <div className={cls.RowInputs}>
-                        <label htmlFor='price' >Введите сумму</label>
-                        <input
-                            id='price'
-                            type='text'
-                            value={`${order.price? order.price: ''}`}
-                            onChange={(e) => handleChangeOrder(e, 'price')}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') { validate(+e.currentTarget.value, 'price'); setEnterPrice(true) }
-                                if (e.key !== 'Enter') {
-                                    setErrors(p => {
-                                        return { ...p, price: true }
-                                    }); setEnterPrice(false)}
-                            }}
-                        />                        
-                        {!isErrors.price && order.price!>0 && <span>Внесите купюры номиналом 50, 100, 200 или 500 рублей</span>}
-                        
+                    <div className={cls.Title}>Совершение покупки</div>
+                    <hr className={cls.Hr} />
+                    <div className={cls.SurrenderContainer}>
+                        <div className={`${cls.Row} ${cls.SurrenderRow}`}>
+                            <label htmlFor='price' >Введите сумму</label>
+                            <input
+                                id='price'
+                                type='text'
+                                value={`${order.price? order.price: ''}`}
+                                onChange={(e) => handleChangeOrder(e, 'price')}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') { validate(+e.currentTarget.value, 'price'); setEnterPrice(true) }
+                                    if (e.key !== 'Enter') {
+                                        setErrors(p => {
+                                            return { ...p, price: true }
+                                        }); setEnterPrice(false)}
+                                }}
+                            />                        
+                            {!isErrors.price && order.price! > 0 && <span>Внесите купюры номиналом 50, 100, 200 или 500 рублей</span>}                            
+                        </div>
+                        <div className={`${cls.Row} ${cls.SurrenderRow} ${cls.RowInputs}`}>
+                            <label htmlFor='id' >Выберите товар</label>
+                            <input
+                                id='id'
+                                type='text'
+                                disabled={isErrors.price && enterPrice ? false : true }
+                                value={`${order.id? order.id: ''}`}
+                                onChange={(e) => { handleChangeOrder(e, 'id'); trueVariants.includes(+e.target.value) && setErrors(p => { return { ...p, id: true } }); setResult(false)}}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') { validate(+e.currentTarget.value, 'id'); mySurrender(); setResult(true)}
+                                    if (e.key !== 'Enter') setErrors(p => {
+                                        return {...p, id: false}
+                                    })                                
+                                }}
+                            />                        
+                            {!isErrors.id && order.id && <span> Выберите товары под номером: {trueVariants.map(t=>t).join(', ')}</span>}
+                        </div>                        
                     </div>
-                    <div className={cls.RowInputs}>
-                        <label htmlFor='id' >Выберите товар</label>
-                        <input
-                            id='id'
-                            type='text'
-                            disabled={isErrors.price && enterPrice ? false : true }
-                            value={`${order.id? order.id: ''}`}
-                            onChange={(e) => { handleChangeOrder(e, 'id'); trueVariants.includes(+e.target.value) && setErrors(p => { return { ...p, id: true } }); setResult(false)}}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') { validate(+e.currentTarget.value, 'id'); mySurrender(); setResult(true)}
-                                if (e.key !== 'Enter') setErrors(p => {
-                                    return {...p, id: false}
-                                })                                
-                            }}
-                        />                        
-                        {!isErrors.id && order.id && <span> Вы можете выбрать товары под номером: {trueVariants.map(t=>t).join(', ')}</span>}
-                    </div>
+
                 </div>
                 {isErrors.id && result && <Surrender surrender={surrender}/>}
                 {isErrors.id && result && products.filter((t) => t.id === order.id).map((t, i) => <MyProduct product={t} key={i}/>)}
