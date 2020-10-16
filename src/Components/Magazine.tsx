@@ -1,21 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { getData } from '../Store/actions/magazineActions';
+import { AppStateType } from '../Store/reducers/rootReducers';
 import cls from '../Style/Magazine.module.scss'
 import { MyProduct } from './MyProduct'
 import { Price } from './Price'
 import { Surrender } from './Surrender'
-
-interface Price {
-    price: number
-    name: string
-}
-
-export interface PriceType extends Price  {
-    id: number
-}
-
-type OntType = {
-    arr: Price[]
-}
 
 type OrderType = {
     price: number | null,
@@ -29,20 +19,15 @@ export type SurrenderType = {
     one: number
 }
 
-export const Magazine: React.FC<OntType> = ({ arr }) => {
-    
-    //Индексация товаров
-    const productsNumeric = useCallback((arr: Price[]) => {
-        const a: PriceType[] = []
-        arr.map((t, i) => a.push({
-            id: i + 1,
-            price: t.price,
-            name: t.name
-        }))
-        return a
-    }, [])
-    const products = useMemo(() => productsNumeric(arr), [productsNumeric, arr])
+type OntType = {}
 
+export const Magazine: React.FC<OntType> = () => {
+    const dispatch = useDispatch();
+    const openTest = () => dispatch(getData());
+    const products = useSelector((state: AppStateType) => state.magazine.products)
+    const loading = useSelector((state: AppStateType) => state.magazine.load)
+    useEffect(() => {openTest() }, [])
+    
     //Заказ пользователя
     const [order, setOrder] = useState<OrderType>({
         price: null,
@@ -61,23 +46,16 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
         const price = [50, 100, 200, 500]   
         switch (target) {
             case 'price':
-                setTrue([...products.filter(t => t.price <= val).map(t=>t.id)])
-                price.includes(val) ?
+                setTrue([...products.filter(t => t.price <= val).map(t => t.id)])
                 setErrors(p => {
-                    return {...p, [target]: true }
-                }) :
-                setErrors(p => {
-                    return {...p, [target]: false}
+                    return { ...p, [target]: price.includes(val) }
                 })
-                break
-            case 'id': trueVariants.includes(val) ?
+                break;
+            case 'id': 
                 setErrors(p => {
-                    return { ...p, [target]: true }
-                }) :
-                setErrors(p => {
-                    return {...p, [target]: false }
-                })                
-        
+                    return { ...p, [target]: trueVariants.includes(val) }
+                }) 
+                break;
             default:
                 break;
         }
@@ -116,8 +94,7 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
 
             setSurrender(p => {
                 return {...p, ten, five, two, one,}
-            })
-            
+            })            
         }
     }
     
@@ -128,7 +105,10 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
     return (
         <div className={cls.Container}>
             <div className={cls.Column}>
-                {products.map((t, i) => <Price key={i} propduct={t} trueVariants={trueVariants} isErrors={isErrors}/>)}
+                {
+                    loading ? <span className={cls.loader}/>:
+                    products.map((t, i) => <Price key={i} propduct={t} trueVariants={trueVariants} isErrors={isErrors} />)
+                }
             </div>
             <div className={cls.Column}>
                 <div className={cls.Row}>
@@ -143,11 +123,16 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
                                 value={`${order.price? order.price: ''}`}
                                 onChange={(e) => handleChangeOrder(e, 'price')}
                                 onKeyPress={(e) => {
-                                    if (e.key === 'Enter') { validate(+e.currentTarget.value, 'price'); setEnterPrice(true) }
+                                    if (e.key === 'Enter') {
+                                        validate(+e.currentTarget.value, 'price');
+                                        setEnterPrice(true)
+                                    }
                                     if (e.key !== 'Enter') {
                                         setErrors(p => {
                                             return { ...p, price: true }
-                                        }); setEnterPrice(false)}
+                                        });
+                                        setEnterPrice(false)
+                                    }
                                 }}
                             />                        
                             {!isErrors.price && order.price! > 0 && <span>Внесите купюры номиналом 50, 100, 200 или 500 рублей</span>}                            
@@ -159,9 +144,17 @@ export const Magazine: React.FC<OntType> = ({ arr }) => {
                                 type='text'
                                 disabled={isErrors.price && enterPrice ? false : true }
                                 value={`${order.id? order.id: ''}`}
-                                onChange={(e) => { handleChangeOrder(e, 'id'); trueVariants.includes(+e.target.value) && setErrors(p => { return { ...p, id: true } }); setResult(false)}}
+                                onChange={(e) => {
+                                    handleChangeOrder(e, 'id');
+                                    trueVariants.includes(+e.target.value) && setErrors(p => { return { ...p, id: true } });
+                                    setResult(false)
+                                }}
                                 onKeyPress={(e) => {
-                                    if (e.key === 'Enter') { validate(+e.currentTarget.value, 'id'); mySurrender(); setResult(true)}
+                                    if (e.key === 'Enter') {
+                                        validate(+e.currentTarget.value, 'id');
+                                        mySurrender();
+                                        setResult(true)
+                                    }
                                     if (e.key !== 'Enter') setErrors(p => {
                                         return {...p, id: false}
                                     })                                

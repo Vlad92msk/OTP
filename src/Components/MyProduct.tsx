@@ -1,5 +1,5 @@
 import React from 'react'
-import { PriceType } from './Magazine'
+import { PriceType } from '../Store/actions/magazineActions'
 import cls from '../Style/Magazine.module.scss'
 
 type MyPropductType = {

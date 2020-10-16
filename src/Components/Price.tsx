@@ -1,6 +1,6 @@
 import React from 'react'
-import { PriceType } from './Magazine'
 import cls from '../Style/Magazine.module.scss'
+import { PriceType } from '../Store/actions/magazineActions'
 
 type PriceTypeFUC = {
     trueVariants: number[]
@@ -9,7 +9,7 @@ type PriceTypeFUC = {
 }
 
 export const Price: React.FC<PriceTypeFUC> = ({ trueVariants, propduct, isErrors }) => {
-    console.log(isErrors)
+   
     return (
         <div className={`${cls.PriceContainer} ${trueVariants.includes(propduct.id) && isErrors.price ? cls.ContainerActive : null}`}>
             <div className={cls.Price_Column}>
